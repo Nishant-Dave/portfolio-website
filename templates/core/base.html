@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Nishant Dave — Python & Django Developer portfolio." />
+  <title>{% block title %}Portfolio{% endblock %}</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.6s ease-in-out',
+            'slide-up': 'slideUp 0.4s ease-out',
+            'blink': 'blink 1s step-end infinite',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: '0', transform: 'translateY(12px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+            slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+            blink: { '0%,100%': { opacity: '1' }, '50%': { opacity: '0' } },
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/syntax.css' %}">
+
+  <style>
+    /* ── Subtle dot-grid background ── */
+    body {
+      background-color: #030712;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124, 58, 237, 0.15) 0%, transparent 60%),
+        radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 28px 28px;
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-gray-950 text-gray-200 antialiased selection:bg-violet-500/30 font-sans min-h-screen flex flex-col">
+
+  <!-- ── Toast Notifications ───────────────────────────────────── -->
+  {% if messages %}
+    <div id="toast-message-container" class="fixed top-20 right-5 z-[100] space-y-2">
+      {% for message in messages %}
+        <div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-bounce">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- ── Navigation ───────────────────────────────────────────── -->
+  <header class="fixed top-0 left-0 w-full z-50 border-b border-white/5 bg-gray-900/80 backdrop-blur-md">
+    <nav class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+
+      <a href="/" class="text-xl font-bold tracking-tight text-white hover:text-violet-400 transition-colors">
+        &lt;Portfolio /&gt;
+      </a>
+
+      <div class="flex items-center gap-6 text-sm font-medium text-gray-400">
+        {% load static %}
+        <a href="{% static 'Nishant Dave resume.pdf' %}" download
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-600 text-gray-300 hover:text-white hover:border-gray-400 transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Download CV
+        </a>
+        <a href="{% url 'core:home' %}#projects" class="hover:text-white transition-colors">Projects</a>
+        <a href="{% url 'core:blog_list' %}" class="hover:text-white transition-colors">Blog</a>
+
+        <!-- Contact → triggers modal -->
+        <button id="open-contact-modal" class="px-4 py-2 rounded-full bg-violet-600 text-white hover:bg-violet-500
+                       transition-colors cursor-pointer">
+          Contact
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ── Main Content ─────────────────────────────────────────── -->
+  <main class="max-w-6xl mx-auto px-6 pt-24 pb-12 flex-1 w-full">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ── Footer ───────────────────────────────────────────────── -->
+  <footer class="border-t border-white/5 mt-20 py-8 text-center text-sm text-gray-600">
+    <p>Built with Django &amp; Tailwind CSS &mdash; {% now "Y" %}</p>
+  </footer>
+
+  <!-- ── Contact Modal ────────────────────────────────────────── -->
+  <div id="contactModal" class="fixed inset-0 bg-black/60 z-50 hidden backdrop-blur-sm">
+    <div class="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-md w-full mx-auto mt-24 relative">
+
+      <!-- Close button -->
+      <button id="close-contact-modal" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <h2 class="text-2xl font-bold text-white mb-1">Say hello 👋</h2>
+      <p class="text-gray-400 text-sm mb-6">I'll get back to you within 24 hours.</p>
+
+      <form action="{% url 'core:contact' %}" method="POST">
+        {% csrf_token %}
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Name</label>
+          <input name="name" type="text" placeholder="Your name"
+            class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white mb-4" required />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Email</label>
+          <input name="email" type="email" placeholder="you@example.com"
+            class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white mb-4" required />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Message</label>
+          <textarea name="message" rows="4" placeholder="What's on your mind?"
+            class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white mb-4 resize-none"
+            required></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3 rounded-lg bg-violet-600 hover:bg-violet-500 text-white
+                       text-sm font-semibold transition-all hover:scale-[1.02] active:scale-95">
+          Send Message
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Modal JS ──────────────────────────────────────────────── -->
+  <script>
+    const modal = document.getElementById('contactModal');
+    const openBtn = document.getElementById('open-contact-modal');
+    const closeBtn = document.getElementById('close-contact-modal');
+
+    function openModal() {
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    // Click outside to close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Escape key to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+
+  <script>
+    // Auto-hide messages after 5 seconds
+    setTimeout(function() {
+      const messageContainer = document.getElementById('toast-message-container');
+      if (messageContainer) {
+        messageContainer.style.transition = 'opacity 0.5s ease';
+        messageContainer.style.opacity = '0';
+        setTimeout(() => messageContainer.remove(), 500); // Remove from DOM after fade out
+      }
+    }, 5000);
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

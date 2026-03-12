@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+
+{% block title %}All Articles — Portfolio{% endblock %}
+
+{% block content %}
+
+<!-- ─── Blog List Section ──────────────────────────────────────── -->
+<section class="max-w-7xl mx-auto py-12 px-4">
+  <h1 class="text-4xl font-bold text-white mb-8">All Articles</h1>
+
+  {% if posts %}
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for post in posts %}
+    <div class="group rounded-2xl border border-white/5 bg-gray-900/60 hover:bg-gray-800/80
+                p-6 transition-all duration-300 hover:-translate-y-1
+                hover:shadow-xl hover:shadow-cyan-500/10 flex flex-col justify-between min-h-[200px]">
+      <div>
+        <p class="text-xs text-gray-600 font-mono mb-3">
+          {{ post.created_at|date:"N j, Y" }}
+        </p>
+        <h2 class="text-xl font-semibold text-white group-hover:text-cyan-300 transition-colors mb-2 leading-tight">
+          {{ post.title }}
+        </h2>
+        <p class="text-gray-400 text-sm line-clamp-3 mb-4">
+          {{ post.content|truncatewords:25 }}
+        </p>
+      </div>
+      <a href="{% url 'core:blog_detail' post.slug %}" class="text-purple-400 hover:text-purple-300 text-sm font-medium inline-flex items-center gap-1 transition-colors mt-auto">
+        Read more &rarr;
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="rounded-2xl border border-dashed border-white/10 bg-gray-900/40 p-16 text-center">
+    <p class="text-gray-500 text-sm">No published posts yet — add them via the
+      <a href="/admin/" class="text-cyan-400 hover:underline">admin panel</a>.
+    </p>
+  </div>
+  {% endif %}
+
+</section>
+
+{% endblock %}
